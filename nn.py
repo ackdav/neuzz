@@ -184,7 +184,7 @@ def train_generate(batch_size):
 # get vector representation of input
 def vectorize_file(fl):
     seed = np.zeros((1, MAX_FILE_SIZE))
-    tmp = open(fl, 'r').read()
+    tmp = open(fl, 'r', encoding="ISO-8859-1").read()
     ln = len(tmp)
     if ln < MAX_FILE_SIZE:
         tmp = tmp + (MAX_FILE_SIZE - ln) * '\0'
@@ -194,11 +194,11 @@ def vectorize_file(fl):
 
 # splice two seeds to a new seed
 def splice_seed(fl1, fl2, idxx):
-    tmp1 = open(fl1, 'r').read()
+    tmp1 = open(fl1, 'r', encoding="ISO-8859-1").read()
     ret = 1
     randd = fl2
     while ret == 1:
-        tmp2 = open(randd, 'r').read()
+        tmp2 = open(randd, 'r', encoding="ISO-8859-1").read()
         if len(tmp1) >= len(tmp2):
             lenn = len(tmp2)
             head = tmp2
@@ -222,7 +222,7 @@ def splice_seed(fl1, fl2, idxx):
             head = list(head)
             tail = list(tail)
             tail[:splice_at] = head[:splice_at]
-            with open('./splice_seeds/tmp_' + str(idxx), 'w') as f:
+            with open('./splice_seeds/tmp_' + str(idxx), 'w', encoding="ISO-8859-1") as f:
                 f.write("".join(tail))
             ret = 0
         print((f_diff, l_diff))
@@ -331,7 +331,7 @@ def gen_mutate2(model, edge_num, sign):
     interested_indice = np.random.choice(MAX_BITMAP_SIZE, edge_num)
     layer_list = [(layer.name, layer) for layer in model.layers]
 
-    with open('gradient_info_p', 'w') as f:
+    with open('gradient_info_p', 'w', encoding="ISO-8859-1") as f:
         for idxx in range(len(interested_indice[:])):
             # keras would stall after multiple gradient computation. Release memory and reload model to fix it.
             if idxx % 100 == 0:
@@ -406,14 +406,14 @@ def setup_server():
     conn, addr = sock.accept()
     print('connected by neuzz execution module' + str(addr))
     gen_grad('train')
-    conn.sendall("start")
+    conn.sendall("start".encode('utf-8'))
     while True:
         data = conn.recv(1024)
         if not data:
             break
         else:
             gen_grad(data)
-            conn.sendall("start")
+            conn.sendall("start".encode('utf-8'))
     conn.close()
 
 
