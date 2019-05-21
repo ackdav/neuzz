@@ -56,7 +56,8 @@ def process_data():
 
     # get MAX_FILE_SIZE
     cwd = os.getcwd()
-    max_file_name = call(['ls', '-S', cwd + '/seeds/']).split('\n')[0].rstrip('\n')
+    # PY 3.7 - added encoding for compatibility
+    max_file_name = call(['ls', '-S', cwd + '/seeds/']).decode('utf-8').split('\n')[0].rstrip('\n')
     MAX_FILE_SIZE = os.path.getsize(cwd + '/seeds/' + max_file_name)
 
     # create directories to save label, spliced seeds, variant length seeds, crashes and mutated seeds.
@@ -86,7 +87,8 @@ def process_data():
         except subprocess.CalledProcessError:
             print("find a crash")
         for line in out.splitlines():
-            edge = line.split(':')[0]
+            # PY 3.7 - added deencoding for compatibility
+            edge = line.decode('utf-8').split(':')[0]
             tmp_cnt.append(edge)
             tmp_list.append(edge)
         raw_bitmap[f] = tmp_list
@@ -117,7 +119,8 @@ def generate_training_data(lb, ub):
     seed = np.zeros((ub - lb, MAX_FILE_SIZE))
     bitmap = np.zeros((ub - lb, MAX_BITMAP_SIZE))
     for i in range(lb, ub):
-        tmp = open(seed_list[i], 'r').read()
+        # PY 3.7 - added encoding for compatibility
+        tmp = open(seed_list[i], 'r', encoding="ISO-8859-1").read()
         ln = len(tmp)
         if ln < MAX_FILE_SIZE:
             tmp = tmp + (MAX_FILE_SIZE - ln) * '\0'
@@ -375,7 +378,7 @@ def train(model):
     callbacks_list = [loss_history, lrate]
     model.fit_generator(train_generate(16),
                         steps_per_epoch=(SPLIT_RATIO / 16 + 1),
-                        epochs=100,
+                        epochs=50,
                         verbose=1, callbacks=callbacks_list)
     # Save model and weights
     model.save_weights("hard_label.h5")
