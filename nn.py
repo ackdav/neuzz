@@ -401,7 +401,7 @@ def setup_server():
     sock.bind((HOST, PORT))
     sock.listen(1)
     conn, addr = sock.accept()
-    print('connected by neuzz execution moduel' + str(addr))
+    print('connected by neuzz execution module' + str(addr))
     gen_grad('train')
     conn.sendall("start")
     while True:
@@ -414,4 +414,5 @@ def setup_server():
     conn.close()
 
 
-setup_server()
+if __name__ == '__main__':
+    setup_server()
