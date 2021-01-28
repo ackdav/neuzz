@@ -11,7 +11,6 @@ from keras.callbacks import ModelCheckpoint
 import time
 import keras.backend as K
 import tensorflow as tf
-from tensorflow import set_random_seed
 import subprocess
 from collections import Counter
 import socket
@@ -28,7 +27,7 @@ round_cnt=0
 seed = 12
 np.random.seed(seed)
 random.seed(seed)
-set_random_seed(seed)
+tf.random.set_seed(seed)
 seed_list = glob.glob('./seeds/*')
 new_seeds = glob.glob('./seeds/id_*')
 SPLIT_RATIO = len(seed_list)
